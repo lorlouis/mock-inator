@@ -1,29 +1,56 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 #define is_alpha_caps(x) (x >= 'A' && x <= 'Z')
 #define is_alpha_lower(x) (x >= 'a' && x <= 'z')
 
+struct {
+    unsigned int use_random : 1;
+    unsigned int change_next : 1;
+} flags;
+
 int main(const int argc, char** argv) {
     if(argc < 2) {
-        puts("usage: mock-inator <sentence>");
+        puts("usage: mock-inator [-r] <sentence>");
         return 0;
     }
 
-    char c, last_was_modified;
+    int start = 1;
+    int probability = RAND_MAX/2;
+    /* TODO rewrite as while - is in [0] case on options */
+    /* use random to be fancy */
+    if(!strcmp("-r", argv[1])) {
+        flags.use_random=1;
+        /* skip option */
+        start = 2;
+    }
+
+
+    /* lousy seed */
+    srand(time(0));
+
+    char c;
     int i;
-    for(i=1; i<argc; i++) {
+    for(i=start; i<argc; i++) {
         while((c = *(argv[i]++))) {
-            if(is_alpha_lower(c) && !last_was_modified){
+            if(is_alpha_lower(c) && flags.change_next){
                 putchar(c - 32);
-                last_was_modified = 1;
+                flags.change_next = 0;
             }
-            else if(is_alpha_caps(c) && !last_was_modified){
+            else if(is_alpha_caps(c) && flags.change_next){
                 putchar(c + 32);
-                last_was_modified = 1;
+               flags.change_next  = 0;
             }
             else{
                 putchar(c);
-                last_was_modified = 0;
+                if(flags.use_random && rand() < probability) {
+                    flags.change_next = 0;
+                }
+                else {
+                    flags.change_next = 1;
+                }
             }
         }
         putchar(' ');
