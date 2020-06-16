@@ -13,7 +13,7 @@ struct {
 
 int main(const int argc, char** argv) {
     if(argc < 2) {
-        puts("usage: mock-inator [-r] <sentence>");
+        puts("usage: mock [-r] <sentence>");
         return 0;
     }
 

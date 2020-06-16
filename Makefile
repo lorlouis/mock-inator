@@ -6,7 +6,7 @@ LFLAGS	 =
 BUILD_DIR = build
 MKDIR_P = mkdir -p
 
-OUT	= mock-inator
+OUT	= mock
 _OBJS = main.o
 OBJS = $(patsubst %,$(BUILD_DIR)/%,$(_OBJS))
 
@@ -16,6 +16,13 @@ sdl: $(OBJS)
 
 rel: $(OBJS)
 	$(CC) -O3 $(OBJS) -o $(OUT) $(LFLAGS)
+
+install:
+	chmod +x mock
+	cp mock /usr/bin/
+
+remove:
+	rm /usr/bin/mock
 
 $(BUILD_DIR)/%.o: %.c
 	$(MKDIR_P) $(BUILD_DIR)
